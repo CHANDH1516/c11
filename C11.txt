@@ -1,0 +1,51 @@
+APP.JAVA CODE
+public class app {
+    public static void main(String[] args) {
+        System.out.println("Hello, Kubernetes and Docker!");
+        while (true) {
+            try {
+                Thread.sleep(10000); // Keep the app running
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+
+DOCKER FILE CODE
+# Use OpenJDK base image
+FROM openjdk:17-jdk-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy application files
+COPY App.java /app
+
+# Compile the Java application
+RUN javac App.java
+
+# Run the application
+CMD ["java", "App"]
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-docker-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-docker-app
+  template:
+    metadata:
+      labels:
+        app: java-docker-app
+    spec:
+      containers:
+      - name: java-docker-app
+        image: sriniketh0564/java-docker-app:latest
+        ports:
+        - containerPort: 8080
